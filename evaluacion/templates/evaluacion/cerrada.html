@@ -1,0 +1,10 @@
+{% extends 'evaluacion/base.html' %}
+{% block title %}Prueba cerrada · EduDiagnóstico{% endblock %}
+{% block content %}
+<section class="tarjeta confirmacion">
+  <p class="etiqueta">CONSULTA A TU DOCENTE</p>
+  <h1>Esta prueba ya está cerrada.</h1>
+  <p>Ya no se pueden enviar respuestas. Pide a tu docente las indicaciones para continuar.</p>
+  <form method="post" action="{% url 'evaluacion:salir' %}">{% csrf_token %}<button class="boton" type="submit">Volver al inicio</button></form>
+</section>
+{% endblock %}

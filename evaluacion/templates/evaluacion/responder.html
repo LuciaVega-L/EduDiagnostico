@@ -1,0 +1,31 @@
+{% extends 'evaluacion/base.html' %}
+{% block title %}Tu prueba · EduDiagnóstico{% endblock %}
+{% block content %}
+<div class="cuestionario">
+  <div class="encabezado-prueba">
+    <p class="etiqueta">{{ intento.prueba.asignatura }} · INGRESO A {{ intento.prueba.grado }}.º</p>
+    <h1>Una pregunta a la vez.</h1>
+    <p>{{ intento.identificador }} · {{ intento.total_preguntas }} preguntas</p>
+    <p>Elige una opción en cada pregunta. Puedes revisar tus respuestas antes de enviarlas.</p>
+  </div>
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {{ form.intento_id }}
+    {% if form.errors %}<div class="errores" role="alert"><strong>Revisa las respuestas antes de enviar.</strong>{{ form.non_field_errors }}{{ form.intento_id.errors }}</div>{% endif %}
+    {% for field in form.visible_fields %}
+    <div class="tarjeta pregunta">
+    <fieldset class="grupo-pregunta">
+      <legend><span class="numero">{{ forloop.counter }}</span><span>{{ field.label }}</span></legend>
+      {% if field.errors %}<div class="error-campo" role="alert">{{ field.errors }}</div>{% endif %}
+      <div class="opciones">
+      {% for radio in field %}
+        <label class="opcion" for="{{ radio.id_for_label }}">{{ radio.tag }}<span class="letra">{{ radio.data.value }}</span><span>{{ radio.choice_label }}</span></label>
+      {% endfor %}
+      </div>
+    </fieldset>
+    </div>
+    {% endfor %}
+    <div class="envio"><p>Cuando termines, envía tus respuestas al docente.</p><button class="boton" type="submit">Enviar mis respuestas <span aria-hidden="true">→</span></button></div>
+  </form>
+</div>
+{% endblock %}

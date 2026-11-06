@@ -1,0 +1,30 @@
+{% extends 'evaluacion/base.html' %}
+{% block title %}Entrar a una prueba · EduDiagnóstico{% endblock %}
+{% block content %}
+<div class="entrada">
+  <section class="bienvenida">
+    <p class="etiqueta">TU PUNTO DE PARTIDA</p>
+    <h1>Vamos a descubrir<br>lo que sabes.</h1>
+    <p class="introduccion">Lee con calma, elige tus respuestas y haz tu mejor intento. Tu docente te acompañará.</p>
+    <div class="ilustracion" aria-hidden="true"><span class="figura circulo">a</span><span class="figura cuadrado">2</span><span class="figura hoja">✦</span></div>
+    <p class="ayuda">En primero, pide ayuda a tu docente o al auxiliar para ingresar.</p>
+  </section>
+  <section class="tarjeta acceso" aria-labelledby="titulo-ingreso">
+    <p class="etiqueta">EMPECEMOS</p>
+    <h2 id="titulo-ingreso">Entra a tu prueba</h2>
+    <p>Usa el código y el identificador que te dio tu docente.</p>
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {% if form.non_field_errors %}<div class="errores" role="alert">{{ form.non_field_errors }}</div>{% endif %}
+      {% for field in form %}
+      <div class="campo">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.errors %}<div class="error-campo" role="alert">{{ field.errors }}</div>{% endif %}
+      </div>
+      {% endfor %}
+      <button class="boton" type="submit">Comenzar <span aria-hidden="true">→</span></button>
+    </form>
+  </section>
+</div>
+{% endblock %}

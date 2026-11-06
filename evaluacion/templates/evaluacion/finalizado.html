@@ -1,0 +1,12 @@
+{% extends 'evaluacion/base.html' %}
+{% block title %}Respuestas enviadas · EduDiagnóstico{% endblock %}
+{% block content %}
+<section class="tarjeta confirmacion">
+  <span class="sello" aria-hidden="true">✓</span>
+  <p class="etiqueta">PRUEBA COMPLETADA</p>
+  <h1>¡Gracias por tu esfuerzo!</h1>
+  <p>Tus respuestas quedaron guardadas. Tu docente ya puede consultar el resultado.</p>
+  <p class="resumen">{{ intento.identificador }} · {{ intento.prueba.asignatura }} · Ingreso a {{ intento.prueba.grado }}.º<br>{{ intento.total_preguntas }} respuestas enviadas</p>
+  <form method="post" action="{% url 'evaluacion:salir' %}">{% csrf_token %}<button class="boton" type="submit">Terminar y volver al inicio</button></form>
+</section>
+{% endblock %}

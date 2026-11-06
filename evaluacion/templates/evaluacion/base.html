@@ -1,0 +1,19 @@
+{% load static %}
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}EduDiagnóstico{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'evaluacion/estilos.css' %}">
+</head>
+<body>
+  <a class="saltar" href="#contenido">Ir al contenido</a>
+  <header class="cabecera">
+    <a class="marca" href="{% url 'evaluacion:ingreso' %}"><span class="simbolo" aria-hidden="true">E</span> EduDiagnóstico</a>
+    <a class="enlace-docente" href="{% url 'admin:index' %}">Acceso docente <span aria-hidden="true">↗</span></a>
+  </header>
+  <main id="contenido">{% block content %}{% endblock %}</main>
+  <footer>Aprender empieza por conocer lo que ya sabemos.</footer>
+</body>
+</html>
