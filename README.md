@@ -4,7 +4,7 @@ Aplicación web cliente-servidor para aplicar **evaluaciones diagnósticas** a e
 
 Proyecto final de la asignatura **Redes de Computadoras**, Ingeniería de Sistemas, Universidad de los Llanos.
 
-> 🚧 **Estado:** recorrido web del estudiante, administración y calificación implementados. Banco importado: 240 preguntas y 960 opciones. Quedan pendientes la revisión visual, la revisión pedagógica y la demostración entre dispositivos.
+> 🚧 **Estado:** recorrido web del estudiante, administración y calificación implementados. Banco importado: 240 preguntas y 960 opciones, con un comando que habilita las 12 pruebas completas (20 preguntas por grado y asignatura). Quedan pendientes la revisión visual, la revisión pedagógica y la demostración entre dispositivos.
 
 ---
 
@@ -116,6 +116,16 @@ El comando muestra el código de una práctica de tres preguntas de Español par
 
 El intento se mantiene en la sesión del navegador. Si se vuelve al inicio antes de enviar, se retoma la misma prueba. Al completar, usar **Terminar y volver al inicio** para atender a otro estudiante. No se guardan borradores de respuestas al recargar o cerrar la página antes del envío. Una prueba breve sirve para comprobar el sistema; no constituye por sí sola un diagnóstico pedagógico completo.
 
+## Habilitar las pruebas completas de todos los grados y asignaturas
+
+Para tener disponibles las 12 pruebas diagnósticas (Español, Matemáticas, Ciencias Naturales y Ciencias Sociales para ingreso a primero, segundo y tercero), cada una con sus 20 preguntas del banco:
+
+```powershell
+.\.venv\Scripts\python.exe manage.py preparar_pruebas --docente admin
+```
+
+El comando lista el código de acceso de cada prueba. Repetirlo no duplica: devuelve los códigos de las pruebas que sigan abiertas y solo crea de nuevo las que se hayan cerrado. Para preparar una sola prueba se pueden usar los filtros `--grado 1|2|3` y `--asignatura ESP|MAT|NAT|SOC`, por ejemplo `preparar_pruebas --grado 1 --asignatura MAT`. La práctica breve de `preparar_demo` se conserva sin cambios.
+
 Si el servidor ya estaba ejecutándose cuando se crearon las carpetas de recursos, reiniciarlo para que reconozca los estilos. Si se usa otro puerto, sustituir `8000` en las direcciones.
 
 ## Comprobaciones
@@ -142,6 +152,7 @@ Las pruebas verifican calificación, integridad, permisos, conservación del con
 - [x] Verificar las validaciones, los envíos duplicados y la separación de resultados.
 - [x] Importar y comprobar la estructura y las claves del banco existente.
 - [x] Implementar las pantallas del estudiante y conectarlas a las operaciones del servidor.
+- [x] Habilitar las 12 pruebas completas (240 preguntas) mediante `preparar_pruebas`.
 - [ ] Revisar visualmente las pantallas y completar la revisión pedagógica de los ítems.
 - [ ] Ejecutar las pruebas en red local y documentar las evidencias.
 - [ ] Completar la guía de uso y el informe final con resultados observados.

@@ -83,13 +83,16 @@ python -m venv .venv
 .\.venv\Scripts\python.exe manage.py importar_banco --comprobar
 .\.venv\Scripts\python.exe manage.py importar_banco
 .\.venv\Scripts\python.exe manage.py preparar_demo --docente admin
+.\.venv\Scripts\python.exe manage.py preparar_pruebas --docente admin
 ```
 
 El primer comando valida el documento sin escribir. El segundo importa las 240 preguntas y 960 opciones en una transacción; repetirlo conserva los registros coincidentes. Si una pregunta existente tiene contenido diferente, informa del conflicto y revierte toda la importación, sin sobrescribir cambios. Los códigos `CN` del documento se relacionan con la asignatura `NAT`, conservando el identificador original.
 
 El documento solo declara referentes generales y componentes: se conserva esa procedencia en `referencia`, sin inventar un DBA o una página por ítem. No se generan reportes por competencia. La revisión pedagógica y las guías específicas de aplicación siguen pendientes.
 
-`preparar_demo` habilita tres preguntas existentes de Español para ingreso a segundo y muestra su código. Reutiliza la práctica abierta del docente; si ya está cerrada, crea otra. No crea usuarios ni inventa preguntas. En esta copia local el banco está importado y la cuenta administradora ya existe.
+`preparar_demo` habilita tres preguntas existentes de Español para ingreso a segundo y muestra su código. Reutiliza la práctica abierta del docente; si ya está cerrada, crea otra. No crea usuarios ni inventa preguntas.
+
+`preparar_pruebas` crea y habilita, para el docente indicado, una prueba por cada grado y asignatura (12 en total) con las 20 preguntas activas de su banco, ordenadas por código del 1 al 20. Usa `habilitar_prueba`, por lo que aplica las mismas validaciones y guarda la copia del contenido de cada ítem. Si la prueba del docente ya está abierta, reutiliza su código; si falta o tiene preguntas inactivas en algún banco, informa el problema y revierte toda la operación. Admite `--grado` y `--asignatura` para preparar una sola prueba. En esta copia local el banco está importado y la cuenta administradora ya existe.
 
 ## Verificación
 
