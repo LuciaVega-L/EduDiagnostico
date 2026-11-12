@@ -1,0 +1,43 @@
+{% extends 'evaluacion/base.html' %}
+{% block title %}Estadísticas · EduDiagnóstico{% endblock %}
+{% block content %}
+<div class="panel">
+  <p class="etiqueta">PANEL DOCENTE</p>
+  <h1>Resultados por grado y asignatura</h1>
+  <p class="panel-nota">Solo se cuentan las pruebas ya enviadas. Los porcentajes son de aciertos y todas las preguntas pesan igual; no son niveles de desempeño.</p>
+
+  {% for grado in grados %}
+  <section class="panel-grado">
+    <h2>Ingreso a {{ grado.nombre|lower }} <span class="panel-total">{{ grado.estudiantes }} envío{{ grado.estudiantes|pluralize:"s" }}</span></h2>
+    <div class="panel-rejilla">
+      {% for fila in grado.asignaturas %}
+      <article class="tarjeta panel-tarjeta">
+        <h3>{{ fila.asignatura }}</h3>
+        {% if fila.estudiantes %}
+          <p class="panel-promedio">{{ fila.promedio|floatformat:1 }}&nbsp;%<span> promedio de aciertos</span></p>
+          <div class="barra" aria-hidden="true"><span style="width: {{ fila.ancho_promedio }}%"></span></div>
+          <p class="panel-datos">{{ fila.estudiantes }} estudiante{{ fila.estudiantes|pluralize }} · mínimo {{ fila.minimo|floatformat:0 }}&nbsp;% · máximo {{ fila.maximo|floatformat:0 }}&nbsp;%</p>
+          <table class="panel-distribucion">
+            <caption>Estudiantes por rango de aciertos</caption>
+            {% for rango in fila.distribucion %}
+            <tr><th scope="row">{{ rango.etiqueta }}</th><td><div class="barra pequena" aria-hidden="true"><span style="width: {{ rango.ancho }}%"></span></div></td><td class="num">{{ rango.cantidad }}</td></tr>
+            {% endfor %}
+          </table>
+          <details>
+            <summary>Aciertos por pregunta (de menos a más)</summary>
+            <ol class="panel-preguntas">
+              {% for p in fila.preguntas %}
+              <li><span class="codigo">{{ p.codigo }}</span> <strong>{{ p.porcentaje|floatformat:0 }}&nbsp;%</strong> <span class="panel-enunciado">{{ p.enunciado|truncatechars:90 }}</span></li>
+              {% endfor %}
+            </ol>
+          </details>
+        {% else %}
+          <p class="panel-vacio">Aún no hay pruebas enviadas.</p>
+        {% endif %}
+      </article>
+      {% endfor %}
+    </div>
+  </section>
+  {% endfor %}
+</div>
+{% endblock %}

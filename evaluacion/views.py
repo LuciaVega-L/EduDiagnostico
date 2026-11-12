@@ -6,6 +6,8 @@ from django.views.decorators.http import require_http_methods, require_POST
 from .forms import IngresoForm, RespuestasForm
 from .models import Intento, Prueba
 from .services import enviar_respuestas, iniciar_intento, preguntas_para_estudiante
+from django.contrib.admin.views.decorators import staff_member_required
+from .estadisticas import estadisticas_docente
 
 
 CLAVE_SESION = 'evaluacion_intento'
@@ -87,3 +89,9 @@ def salir(request):
     request.session.pop(CLAVE_SESION, None)
     request.session.cycle_key()
     return redirect('evaluacion:ingreso')
+@never_cache
+@staff_member_required
+@require_http_methods(['GET'])
+def panel(request):
+    """Panel docente: estadísticas por grado y asignatura."""
+    return render(request, 'evaluacion/panel.html', {'grados': estadisticas_docente(request.user)})
