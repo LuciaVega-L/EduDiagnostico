@@ -6,6 +6,11 @@
   <p class="etiqueta">PRUEBA COMPLETADA</p>
   <h1>¡Gracias por tu esfuerzo!</h1>
   <p>Tus respuestas quedaron guardadas. Tu docente ya puede consultar el resultado.</p>
+  <div class="puntaje" role="status" aria-label="Resultado de la prueba">
+  <p class="puntaje-etiqueta">Tu resultado</p>
+  <p class="puntaje-valor">{{ intento.aciertos }}<span class="puntaje-sep">/</span>{{ intento.total_preguntas }}</p>
+  <p class="puntaje-detalle">{{ intento.aciertos }} respuesta{{ intento.aciertos|pluralize }} correcta{{ intento.aciertos|pluralize }} de {{ intento.total_preguntas }} · {{ intento.porcentaje|floatformat:0 }}&nbsp;% de aciertos</p>
+  </div>
   <p class="resumen">{{ intento.identificador }} · {{ intento.prueba.asignatura }} · Ingreso a {{ intento.prueba.grado }}.º<br>{{ intento.total_preguntas }} respuestas enviadas</p>
   <form method="post" action="{% url 'evaluacion:salir' %}">{% csrf_token %}<button class="boton" type="submit">Terminar y volver al inicio</button></form>
 </section>
