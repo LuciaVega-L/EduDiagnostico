@@ -1,4 +1,4 @@
-from django.test import Client
+from django.test import Client, TestCase
 from django.urls import reverse
 
 from .models import Intento, Respuesta
@@ -113,3 +113,56 @@ class RecorridoEstudianteTests(DatosDiagnostico):
     def test_paginas_privadas_no_se_cachean(self):
         self.entrar()
         self.assertIn('no-store', self.client.get(reverse('evaluacion:responder'))['Cache-Control'])
+
+class PanelEstadisticasTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        from django.contrib.auth import get_user_model
+        from .models import Asignatura, ItemPrueba, Pregunta, Prueba
+        from .services import habilitar_prueba
+        usuario = get_user_model()
+        cls.docente = usuario.objects.create_user('docente1', password='x', is_staff=True)
+        cls.otro = usuario.objects.create_user('docente2', password='x', is_staff=True)
+        cls.super = usuario.objects.create_superuser('root', password='x')
+        asig = Asignatura.objects.get(codigo='ESP')
+        cls.preguntas = []
+        for i in range(1, 4):
+            p = Pregunta.objects.create(codigo=f'2-ESP-T{i}', asignatura=asig, grado=2, enunciado=f'Enunciado {i}', referencia='r')
+            for letra in 'ABCD':
+                p.opciones.create(letra=letra, texto=f'op {letra}', es_correcta=letra == 'A')
+            cls.preguntas.append(p)
+        cls.prueba = Prueba.objects.create(titulo='T', docente=cls.docente, grado=2, asignatura=asig)
+        for orden, p in enumerate(cls.preguntas, 1):
+            ItemPrueba.objects.create(prueba=cls.prueba, pregunta=p, orden=orden)
+        habilitar_prueba(cls.prueba.pk, docente=cls.docente)
+
+    def enviar(self, identificador, letras):
+        from .services import enviar_respuestas, iniciar_intento
+        intento = iniciar_intento(self.prueba.codigo, identificador, acompanamiento='SIN_APOYO')
+        items = list(self.prueba.items.all())
+        enviar_respuestas(intento.token, {str(i.pk): l for i, l in zip(items, letras)})
+
+    def test_exige_cuenta_docente(self):
+        self.assertEqual(self.client.get(reverse('evaluacion:panel')).status_code, 302)
+
+    def test_calcula_promedio_y_aciertos_por_pregunta(self):
+        from .estadisticas import estadisticas_docente
+        self.enviar('E1', 'AAA')   # 3/3 = 100 %
+        self.enviar('E2', 'ABB')   # 1/3 = 33,3 %
+        grado2 = estadisticas_docente(self.docente)[1]
+        esp = grado2['asignaturas'][0]
+        self.assertEqual(esp['estudiantes'], 2)
+        self.assertEqual(esp['promedio'], 66.7)
+        self.assertEqual((esp['minimo'], esp['maximo']), (33.3, 100))
+        por_pregunta = {p['codigo']: p['porcentaje'] for p in esp['preguntas']}
+        self.assertEqual(por_pregunta, {'2-ESP-T1': 100, '2-ESP-T2': 50, '2-ESP-T3': 50})
+        self.assertEqual(sum(r['cantidad'] for r in esp['distribucion']), 2)
+
+    def test_pagina_y_alcance_por_docente(self):
+        self.enviar('E1', 'AAA')
+        self.client.force_login(self.docente)
+        self.assertContains(self.client.get(reverse('evaluacion:panel')), '100,0')
+        self.client.force_login(self.otro)
+        self.assertContains(self.client.get(reverse('evaluacion:panel')), 'Aún no hay pruebas enviadas')
+        self.client.force_login(self.super)
+        self.assertContains(self.client.get(reverse('evaluacion:panel')), '100,0')

@@ -11,6 +11,7 @@
   <a class="saltar" href="#contenido">Ir al contenido</a>
   <header class="cabecera">
     <a class="marca" href="{% url 'evaluacion:ingreso' %}"><span class="simbolo" aria-hidden="true">E</span> EduDiagnóstico</a>
+    {% if user.is_staff %}<a class="enlace-docente" href="{% url 'evaluacion:panel' %}">Estadísticas</a>{% endif %}
     <a class="enlace-docente" href="{% url 'admin:index' %}">Acceso docente <span aria-hidden="true">↗</span></a>
   </header>
   <main id="contenido">{% block content %}{% endblock %}</main>
